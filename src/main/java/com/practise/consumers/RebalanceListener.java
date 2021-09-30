@@ -31,24 +31,27 @@ public class RebalanceListener implements ConsumerRebalanceListener {
     public void onPartitionsRevoked(Collection<TopicPartition> collection) {
         System.out.println("Following Partitions are Revoked..");
         for(TopicPartition partition: collection){
-            System.out.println(partition.partition() + ",");
+            System.out.println(partition.partition() + "," + partition.topic());
         }
         System.out.println("Following Partitions are Committed..");
+        for(TopicPartition tp: currentOffsets.keySet())
+            System.out.println(tp.partition() + tp.topic());
+
+        consumer.commitSync(currentOffsets);
+        currentOffsets.clear();
     }
+
+
 
     @Override
     public void onPartitionsAssigned(Collection<TopicPartition> collection) {
         System.out.println("Following Partitions are Assigned..");
 
         for(TopicPartition partition: collection){
-            System.out.println(partition.partition() + ",");
+            System.out.println(partition.partition() + "," + partition.topic());
         }
 
-        for(TopicPartition tp: currentOffsets.keySet())
-            System.out.println(tp.partition());
 
-        consumer.commitSync(currentOffsets);
-        currentOffsets.clear();
     }
 
 
