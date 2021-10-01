@@ -21,7 +21,8 @@ public class kStreamExample {
 
         StreamsBuilder streamsBuilder = new StreamsBuilder();
         KStream<Integer, String> kStream = streamsBuilder.stream("input");
-        kStream.foreach((k, v) -> System.out.println("Key= " + k + " Value= " + v));
+        KStream<Integer, String> result = kStream.filter((k,v) -> Integer.valueOf(v)%2 == 0);
+        result.foreach((k, v) -> System.out.println("Key= " + k + " Value= " + v));
         //kStream.peek((k,v)-> System.out.println("Key= " + k + " Value= " + v));
 
         Topology topology = streamsBuilder.build();
