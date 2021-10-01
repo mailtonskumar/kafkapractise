@@ -9,16 +9,18 @@ public class SparkKafkaExample {
 
     public static void main(String ...args) throws StreamingQueryException {
         SparkSession spark = SparkSession.builder()
-                .master("local[1]")
+                .master("local[*]")
                 .appName("kafka integration example")
                 .getOrCreate();
+        spark.sparkContext().setLogLevel("ERROR");
         Dataset<Row> df = spark
                 .readStream()
                 .format("kafka")
                 .option("kafka.bootstrap.servers", "localhost:9092")
-                .option("subscribe", "topic2")
+                .option("subscribe", "topic4")
                 .load();
-        df.writeStream().format("console").outputMode("append").start().awaitTermination();
+        Dataset<Row> ds =  df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)");
+        ds.writeStream().format("console").outputMode("append").start().awaitTermination();
 
 
     }
